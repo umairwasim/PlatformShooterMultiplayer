@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour
     private const string KILLS = "kills";
 
     private PhotonView photonView;
-    private GameObject controller;
+    private GameObject playerController;
 
     private int kills;
     private int deaths;
@@ -30,27 +30,26 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        //IF photonView is local player
+        //IF photonView is local player, instantiate player controller prefab
         if (photonView.IsMine)
-        {
-            CreateController();
-        }
+            CreatePlayerController();
     }
 
-    void CreateController()
+    void CreatePlayerController()
     {
-        Transform spawnpoint = SpawnManager.Instance.GetSpawnpoint();
-        controller = PhotonNetwork.Instantiate(Path.Combine(PREFABS, PLAYER_CONTROLLER), 
-            spawnpoint.position, spawnpoint.rotation, 0, new object[] { photonView.ViewID });
+        UnityEngine.Transform randomSpawnpoint = SpawnManager.Instance.GetRandomSpawnpoint();
+        playerController = PhotonNetwork.Instantiate(Path.Combine(PREFABS, PLAYER_CONTROLLER),
+            randomSpawnpoint.position, randomSpawnpoint.rotation, 0, new object[] { photonView.ViewID });
     }
 
     public void Die()
     {
-        PhotonNetwork.Destroy(controller);
-        CreateController();
+        PhotonNetwork.Destroy(playerController);
+        CreatePlayerController();
 
         deaths++;
 
+        //Add to Deaths hash table and set local player property
         Hashtable hash = new();
         hash.Add(DEATHS, deaths);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
@@ -66,6 +65,7 @@ public class PlayerManager : MonoBehaviour
     {
         kills++;
 
+        //Add to Kills hash table and set local player property
         Hashtable hash = new();
         hash.Add(KILLS, kills);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
