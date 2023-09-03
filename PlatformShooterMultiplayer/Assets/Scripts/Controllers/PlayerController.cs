@@ -5,6 +5,8 @@ using Photon.Pun;
 [RequireComponent(typeof(PhotonView))]
 public class PlayerController : MonoBehaviourPunCallbacks
 {
+    public static bool facingRight;
+
     public int maxHealth = 100;
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
@@ -13,17 +15,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private int currentHealth;
     private bool isGrounded;
+
     private const string GROUND = "Ground";
     private const string FIRE = "Fire1";
     private const string HORIZONTAL = "Horizontal";
 
     private Rigidbody2D rb;
+    private Transform spriteTransform;
     private PhotonView photonView;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         photonView = GetComponent<PhotonView>();
+        spriteTransform = GetComponent<Transform>();
+
         currentHealth = maxHealth;
     }
 
@@ -40,15 +46,34 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        }
     }
 
     private void Move()
     {
         float horizontalInput = Input.GetAxis(HORIZONTAL);
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+      
+        //Left
+        if (Input.GetAxisRaw(HORIZONTAL) > 0)
+        {
+            if (spriteTransform.localScale.x > 1)
+            {
+                spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
+            }
+            facingRight = false;
+            //rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+
+        }
+        //Right
+        else if (Input.GetAxisRaw(HORIZONTAL) < 0)
+        {
+            if (spriteTransform.localScale.x < 1)
+            {
+                spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
+            }
+            facingRight = true;
+        }
+            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
     }
 
     private void Shoot()
@@ -61,7 +86,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
 
-            rb.velocity = transform.right * projectileController.speed;
+            rb.velocity = transform.right * projectileController.bulletData.speed;
 
             // Set owner of the projectile
             projectileController.SetOwner(photonView.ViewID);
