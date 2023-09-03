@@ -20,27 +20,34 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private const string FIRE = "Fire1";
     private const string HORIZONTAL = "Horizontal";
 
-    private Rigidbody2D rb;
     private Transform spriteTransform;
-    private PhotonView photonView;
+    private Rigidbody2D rb;
+    private PhotonView pv;
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        photonView = GetComponent<PhotonView>();
+        pv = GetComponent<PhotonView>();
         spriteTransform = GetComponent<Transform>();
 
         currentHealth = maxHealth;
     }
 
+    private void Start()
+    {
+        //Prevent applying Physics to other client
+        if (!pv.IsMine)
+            Destroy(rb);
+    }
+
     private void FixedUpdate()
     {
-        if (photonView.IsMine)
-        {
-            Move();
-            Jump();
-            Shoot();
-        }
+        if (!pv.IsMine)
+            return;
+
+        Move();
+        Jump();
+        Shoot();
     }
 
     private void Jump()
@@ -61,8 +68,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
             }
             facingRight = false;
-            //rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-
         }
         //Right
         else if (Input.GetAxisRaw(HORIZONTAL) < 0)
@@ -84,25 +89,28 @@ public class PlayerController : MonoBehaviourPunCallbacks
             GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, firePoint.position, firePoint.rotation);
 
             ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
-            Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = projectile?.GetComponent<Rigidbody2D>();
 
-            rb.velocity = transform.right * projectileController.bulletData.speed;
+            if (projectileController)
+            {
+                rb.velocity = transform.right * projectileController.bulletData.speed;
 
-            // Set owner of the projectile
-            projectileController.SetOwner(photonView.ViewID);
+                // Set owner of the projectile
+                projectileController.SetOwner(pv.ViewID);
+            }
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (!photonView.IsMine)
+        if (!pv.IsMine)
             return;
 
         currentHealth -= damage;
+
         if (currentHealth <= 0)
-        {
             Die();
-        }
+
     }
 
     private void Die()
