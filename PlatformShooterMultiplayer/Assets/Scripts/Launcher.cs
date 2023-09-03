@@ -62,23 +62,19 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         Player[] players = PhotonNetwork.PlayerList;
 
-        //Delete previous content in children
+        //Delete previous content in children so that old ones are now shown 
         foreach (Transform child in playerListContent)
-        {
             Destroy(child.gameObject);
-        }
 
         //set up players
         for (int i = 0; i < players.Count(); i++)
-        {
             Instantiate(PlayerListItemPrefab, playerListContent).SetUp(players[i]);
             //if (playerItem.TryGetComponent(out PlayerListItem playerListItem))
             //{
             //    playerListItem.SetUp(players[i]);
             //}
 
-        }
-
+        //Only Master Client can start the Game
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
     }
 
