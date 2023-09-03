@@ -14,8 +14,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text errorText;
     [SerializeField] TMP_Text roomNameText;
     [SerializeField] GameObject startGameButton;
-    [SerializeField] Transform roomListContent;
-    [SerializeField] Transform playerListContent;
+    [SerializeField] UnityEngine.Transform roomListContent;
+    [SerializeField] UnityEngine.Transform playerListContent;
     [SerializeField] RoomListItem roomListItemPrefab;
     [SerializeField] PlayerListItem PlayerListItemPrefab;
 
@@ -63,7 +63,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         Player[] players = PhotonNetwork.PlayerList;
 
         //Delete previous content in children so that old ones are now shown 
-        foreach (Transform child in playerListContent)
+        foreach (UnityEngine.Transform child in playerListContent)
             Destroy(child.gameObject);
 
         //set up players
@@ -96,7 +96,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        foreach (Transform trans in roomListContent)
+        foreach (UnityEngine.Transform trans in roomListContent)
         {
             Destroy(trans.gameObject);
         }
