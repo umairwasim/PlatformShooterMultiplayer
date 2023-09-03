@@ -6,7 +6,7 @@ using Photon.Pun;
 
 public class Scoreboard : MonoBehaviourPunCallbacks
 {
-	[SerializeField] Transform container;
+	[SerializeField] UnityEngine.Transform container;
 	[SerializeField] GameObject scoreboardItemPrefab;
 	[SerializeField] CanvasGroup canvasGroup;
 
