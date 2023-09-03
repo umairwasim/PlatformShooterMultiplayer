@@ -52,11 +52,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Move()
     {
         float horizontalInput = Input.GetAxis(HORIZONTAL);
-      
+
         //Left
         if (Input.GetAxisRaw(HORIZONTAL) > 0)
         {
-            if (spriteTransform.localScale.x > 1)
+            if (spriteTransform.localScale.x < 1)
             {
                 spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
             }
@@ -67,13 +67,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
         //Right
         else if (Input.GetAxisRaw(HORIZONTAL) < 0)
         {
-            if (spriteTransform.localScale.x < 1)
+            if (spriteTransform.localScale.x > 1)
             {
                 spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
             }
             facingRight = true;
         }
-            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
     }
 
     private void Shoot()

@@ -42,7 +42,7 @@ public class Movement : MonoBehaviour{
 
 		if (Input.GetKey (leftKey))
 		{
-			if(sprite.localScale.x < 1){
+			if(sprite.localScale.x > 1){
 				sprite.localScale = new Vector3 (sprite.localScale.x * -1, sprite.localScale.y, sprite.localScale.z);
 			}
 			facingRight = false;
@@ -50,7 +50,7 @@ public class Movement : MonoBehaviour{
 		}
 		if (Input.GetKey (rightKey))
 		{
-			if(sprite.localScale.x > 1){
+			if(sprite.localScale.x < 1){
 				sprite.localScale = new Vector3 (sprite.localScale.x * -1, sprite.localScale.y, sprite.localScale.z);
 			}
 			facingRight = true;
