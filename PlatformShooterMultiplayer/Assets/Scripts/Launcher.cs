@@ -63,16 +63,12 @@ public class Launcher : MonoBehaviourPunCallbacks
         Player[] players = PhotonNetwork.PlayerList;
 
         //Delete previous content in children so that old ones are now shown 
-        foreach (UnityEngine.Transform child in playerListContent)
+        foreach (Transform child in playerListContent)
             Destroy(child.gameObject);
 
         //set up players
         for (int i = 0; i < players.Count(); i++)
             Instantiate(PlayerListItemPrefab, playerListContent).SetUp(players[i]);
-            //if (playerItem.TryGetComponent(out PlayerListItem playerListItem))
-            //{
-            //    playerListItem.SetUp(players[i]);
-            //}
 
         //Only Master Client can start the Game
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
@@ -96,7 +92,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        foreach (UnityEngine.Transform trans in roomListContent)
+        foreach (Transform trans in roomListContent)
         {
             Destroy(trans.gameObject);
         }
@@ -133,6 +129,4 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(info.Name);
         MenuManager.Instance.SwtichMenu(MenuType.Loading);
     }
-
-
 }
