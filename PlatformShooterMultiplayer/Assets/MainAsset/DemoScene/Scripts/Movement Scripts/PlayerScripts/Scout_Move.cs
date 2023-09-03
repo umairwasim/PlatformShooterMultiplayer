@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Scout_Move : MonoBehaviour{
 	public KeyCode shootKey = KeyCode.T;
-	public Transform sprite;
+	public UnityEngine.Transform sprite;
 	// Use this for initialization
 	Animator anim;
 	//Speed and jump vary between characters

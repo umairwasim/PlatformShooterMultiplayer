@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Demoman_Move : MonoBehaviour {
 	public KeyCode shootKey = KeyCode.T;
-	public Transform sprite;
+	public UnityEngine.Transform sprite;
 	// Use this for initialization
 	Animator anim;
 	//Speed and jump vary between characters
@@ -63,7 +63,7 @@ public class Demoman_Move : MonoBehaviour {
 		}
 		GameObject DemomanBullet = Instantiate (bullet, gunPoint.transform.position, gunPoint.transform.rotation) as GameObject;
 		DemomanBullet.tag = "Bullet";
-		DemomanBullet.GetComponent<Transform> ().eulerAngles = new Vector3 (0,0, Random.Range(0,360));
+		DemomanBullet.GetComponent<UnityEngine.Transform> ().eulerAngles = new Vector3(0,0, Random.Range(0,360));
 		if(Movement.facingRight){
 			DemomanBullet.GetComponent<Rigidbody2D> ().AddForce (Vector2.right * bulletStrength);
 		}
