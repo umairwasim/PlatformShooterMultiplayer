@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 5
-  jumpForce: 5
+  moveSpeed: 1.5
+  jumpForce: 2
   firePoint: {fileID: 7108767624656659556}
   projectilePrefab: {fileID: 1688972906706456, guid: f2acf128205663c4c950a75f99eb2dd8, type: 3}
