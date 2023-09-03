@@ -8,7 +8,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public static RoomManager Instance;
 
     private readonly int GameSceneIndex = 1;
-
+   
+    private const string PREFABS = "Prefabs";
+    private const string PLAYER_MANAGER = "PlayerManager";
+   
     void Awake()
     {
         if (Instance)
@@ -35,12 +38,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
 
     #endregion
+
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
         // if the loaded scene is the Game scene
         if (scene.buildIndex == GameSceneIndex)
-            //Instantiate Player Manager from resrouces folder
-            PhotonNetwork.Instantiate(Path.Combine("Prefabs", "PlayerManager")
-                , Vector3.zero, Quaternion.identity);
+            //Instantiate Player Manager prefab from Resrouces folder
+            PhotonNetwork.Instantiate(Path.Combine(PREFABS, PLAYER_MANAGER), Vector3.zero, Quaternion.identity);
     }
 }
