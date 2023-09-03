@@ -3,10 +3,10 @@ using Photon.Pun;
 
 public class ProjectileController : MonoBehaviourPunCallbacks
 {
-    public float speed = 10f;
-    public int damage = 10;
+    public BulletData bulletData;
 
-    private int ownerViewId; // The PhotonView ID of the player who fired the projectile
+    // The PhotonView ID of the player who fired the projectile
+    private int ownerViewId;
 
     private void Start()
     {
@@ -15,7 +15,7 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        transform.Translate(speed * Time.deltaTime * Vector3.right);
+        transform.Translate(bulletData.speed * Time.deltaTime * Vector3.right);
     }
 
     public void SetOwner(int viewId)
@@ -31,7 +31,7 @@ public class ProjectileController : MonoBehaviourPunCallbacks
             // Ensure that the player hit is not the owner of the projectile
             if (player.photonView.ViewID != ownerViewId)
             {
-                player.TakeDamage(damage);
+                player.TakeDamage(bulletData.damage);
                 Destroy(gameObject);
             }
         }
