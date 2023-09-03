@@ -1,21 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-	public static SpawnManager Instance;
+    public static SpawnManager Instance;
 
-	Spawnpoint[] spawnpoints;
+    [SerializeField] private UnityEngine.Transform[] spawnpoints;
 
-	void Awake()
-	{
-		Instance = this;
-		spawnpoints = GetComponentsInChildren<Spawnpoint>();
-	}
+    void Awake()
+    {
+        Instance = this;
 
-	public Transform GetSpawnpoint()
-	{
-		return spawnpoints[Random.Range(0, spawnpoints.Length)].transform;
-	}
+        if (spawnpoints.Length == 0)
+            spawnpoints = GetComponentsInChildren<UnityEngine.Transform>();
+    }
+
+    public UnityEngine.Transform GetRandomSpawnpoint() => spawnpoints[Random.Range(0, spawnpoints.Length)].transform;
 }
