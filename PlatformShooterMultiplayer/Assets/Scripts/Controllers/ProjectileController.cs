@@ -25,8 +25,10 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        PlayerController player = collision.GetComponent<PlayerController>();
-        if (player != null)
+
+        if (collision.TryGetComponent(out PlayerController player))
+        //    PlayerController player = collision.GetComponent<PlayerController>();
+        //if (player != null)
         {
             // Ensure that the player hit is not the owner of the projectile
             if (player.photonView.ViewID != ownerViewId)
