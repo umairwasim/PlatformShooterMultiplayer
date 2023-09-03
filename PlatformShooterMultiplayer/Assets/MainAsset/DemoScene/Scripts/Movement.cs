@@ -40,15 +40,17 @@ public class Movement : MonoBehaviour{
 			}
 		}
 
-		if (Input.GetKey (leftKey)) {
-			if(sprite.localScale.x > 1){
+		if (Input.GetKey (leftKey))
+		{
+			if(sprite.localScale.x < 1){
 				sprite.localScale = new Vector3 (sprite.localScale.x * -1, sprite.localScale.y, sprite.localScale.z);
 			}
 			facingRight = false;
 			rdbdy.velocity = new Vector2 (-speed,  rdbdy.velocity.y);
 		}
-		if (Input.GetKey (rightKey)) {
-			if(sprite.localScale.x < 1){
+		if (Input.GetKey (rightKey))
+		{
+			if(sprite.localScale.x > 1){
 				sprite.localScale = new Vector3 (sprite.localScale.x * -1, sprite.localScale.y, sprite.localScale.z);
 			}
 			facingRight = true;
