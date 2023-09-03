@@ -75,10 +75,10 @@ GameObject:
   - component: {fileID: 7108767625872388763}
   - component: {fileID: 7108767625872388764}
   - component: {fileID: 7108767625872388765}
-  - component: {fileID: 7108767625872388766}
   - component: {fileID: 7108767625872388767}
-  - component: {fileID: 7108767625872388760}
   - component: {fileID: 7108767625872388761}
+  - component: {fileID: 7108767625872388760}
+  - component: {fileID: 499512731756300690}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: AttackingTeam
@@ -228,25 +228,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &7108767625872388766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7108767625872388737}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70e0b7e9ce0b2c54c95bc32eab22759e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shootKey: 116
-  sprite: {fileID: 7108767625872388736}
-  spy_spawn: 0
-  ground: 0
-  rigid: {fileID: 7108767625872388765}
-  gunPoint: {fileID: 7108767624656659557}
-  bullet: {fileID: 1688972906706456, guid: f2acf128205663c4c950a75f99eb2dd8, type: 3}
 --- !u!95 &7108767625872388767
 Animator:
   serializedVersion: 4
@@ -267,6 +248,23 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &7108767625872388761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7108767625872388737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd8a3d639f03a745b32975942030ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  moveSpeed: 1.5
+  jumpForce: 4
+  firePoint: {fileID: 7108767624656659556}
+  projectilePrefab: {fileID: 1688972906706456, guid: f2acf128205663c4c950a75f99eb2dd8, type: 3}
 --- !u!114 &7108767625872388760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,11 +283,12 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 499512731756300690}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &7108767625872388761
+--- !u!114 &499512731756300690
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -298,11 +297,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7108767625872388737}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bd8a3d639f03a745b32975942030ca8, type: 3}
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  moveSpeed: 1.5
-  jumpForce: 4
-  firePoint: {fileID: 7108767624656659556}
-  projectilePrefab: {fileID: 1688972906706456, guid: f2acf128205663c4c950a75f99eb2dd8, type: 3}
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 1
+  m_UseLocal: 1
