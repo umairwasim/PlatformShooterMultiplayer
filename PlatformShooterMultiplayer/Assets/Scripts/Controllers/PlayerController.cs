@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
             //Destroy(healthCanvas);
         }
 
-        healthBarImage.fillAmount = currentHealth / maxHealth;
+        //healthBarImage.fillAmount = currentHealth / maxHealth;
     }
 
     private void FixedUpdate()
