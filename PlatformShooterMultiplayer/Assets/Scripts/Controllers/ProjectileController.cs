@@ -5,18 +5,29 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 {
     public BulletData bulletData;
 
+    public Vector3 currentDir;
+
     // The PhotonView ID of the player who fired the projectile
     private int ownerViewId;
 
     private void Start()
     {
         Destroy(gameObject, 3f);
+        currentDir = Vector3.right;
     }
 
     private void Update()
     {
-        transform.Translate(bulletData.speed * Time.deltaTime * Vector3.right);
+       // if (PlayerController.facingRight)
+            transform.Translate(bulletData.speed * Time.deltaTime * Vector3.right);
+        //else if (!PlayerController.facingRight)
+        //    transform.Translate(bulletData.speed * Time.deltaTime * Vector3.left);
     }
+
+    //public void SetBulletDirection(Vector3 dir)
+    //{
+    //    currentDir = dir;
+    //}
 
     public void SetOwner(int viewId)
     {
