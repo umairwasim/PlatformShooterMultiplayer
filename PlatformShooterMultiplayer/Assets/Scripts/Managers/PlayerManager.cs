@@ -37,9 +37,12 @@ public class PlayerManager : MonoBehaviour
 
     void CreatePlayerController()
     {
-        UnityEngine.Transform randomSpawnpoint = SpawnManager.Instance.GetRandomSpawnpoint();
+        Transform randomSpawnpoint = SpawnManager.Instance.GetRandomSpawnpoint();
         playerController = PhotonNetwork.Instantiate(Path.Combine(PREFABS, PLAYER_CONTROLLER),
-            randomSpawnpoint.position, randomSpawnpoint.rotation, 0, new object[] { photonView.ViewID });
+            randomSpawnpoint.position, 
+            randomSpawnpoint.rotation, 
+            0, 
+            new object[] { photonView.ViewID });
     }
 
     public void Die()
