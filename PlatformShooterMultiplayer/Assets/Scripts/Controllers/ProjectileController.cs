@@ -33,25 +33,25 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IDamageable damageable))
-        {
-            Debug.Log("Player "  + " damage dealt " + bulletData.damage);
-            damageable.TakeDamage(bulletData.damage);
-            Destroy(gameObject);
-        }
-
-        //if (collision.TryGetComponent(out PlayerController playerController))
-        ////    PlayerController player = collision.GetComponent<PlayerController>();
-        ////if (player != null)
+        //if(collision.TryGetComponent(out IDamageable damageable))
         //{
-        //    // Ensure that the player hit is not the owner of the projectile
-        //    if (playerController.photonView.ViewID != ownerViewId)
-        //    {
-        //        playerController.TakeDamage(bulletData.damage);
-        //        Debug.Log("Player " + playerController.photonView.ViewID  + " damage dealt " + bulletData.damage);
-        //        Destroy(gameObject);
-        //    }
+        //    Debug.Log("Player "  + " damage dealt " + bulletData.damage);
+        //    damageable.TakeDamage(bulletData.damage);
+        //    Destroy(gameObject);
         //}
+
+        if (collision.TryGetComponent(out PlayerController playerController))
+        //    PlayerController player = collision.GetComponent<PlayerController>();
+        //if (player != null)
+        {
+            // Ensure that the player hit is not the owner of the projectile
+            if (playerController.photonView.ViewID != ownerViewId)
+            {
+                playerController.TakeDamage(bulletData.damage);
+                Debug.Log("Player " + playerController.photonView.ViewID + " damage dealt " + bulletData.damage);
+                Destroy(gameObject);
+            }
+        }
         else
         {
             Destroy(gameObject);
