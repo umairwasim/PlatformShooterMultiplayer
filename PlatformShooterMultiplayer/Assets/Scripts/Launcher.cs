@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Photon.Pun;
-using TMPro;
+﻿using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -14,8 +13,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text errorText;
     [SerializeField] TMP_Text roomNameText;
     [SerializeField] GameObject startGameButton;
-    [SerializeField] UnityEngine.Transform roomListContent;
-    [SerializeField] UnityEngine.Transform playerListContent;
+    [SerializeField] Transform roomListContent;
+    [SerializeField] Transform playerListContent;
     [SerializeField] RoomListItem roomListItemPrefab;
     [SerializeField] PlayerListItem PlayerListItemPrefab;
 
@@ -93,9 +92,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         foreach (Transform trans in roomListContent)
-        {
             Destroy(trans.gameObject);
-        }
 
         for (int i = 0; i < roomList.Count; i++)
         {
@@ -118,15 +115,18 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel(1);
     }
 
-    public void LeaveRoom()
-    {
-        PhotonNetwork.LeaveRoom();
-        MenuManager.Instance.SwtichMenu(MenuType.Loading);
-    }
-
+    #region Join/Leave Room
+    
     public void JoinRoom(RoomInfo info)
     {
         PhotonNetwork.JoinRoom(info.Name);
         MenuManager.Instance.SwtichMenu(MenuType.Loading);
     }
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        MenuManager.Instance.SwtichMenu(MenuType.Loading);
+    }
+    
+    #endregion
 }
