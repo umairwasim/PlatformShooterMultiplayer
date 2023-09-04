@@ -7,7 +7,7 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 
     // The PhotonView ID of the player who fired the projectile
     private int ownerViewId;
-
+    private bool isEntered = false;
     private void Start()
     {
         Destroy(gameObject, 3f);
@@ -33,9 +33,10 @@ public class ProjectileController : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IDamageable damageable))
+        if (collision.TryGetComponent(out IDamageable damageable) && !isEntered)
         {
             Debug.Log("Player " + " damage dealt " + bulletData.damage);
+            isEntered = true;
             damageable.TakeDamage(bulletData.damage);
             Destroy(gameObject);
         }
