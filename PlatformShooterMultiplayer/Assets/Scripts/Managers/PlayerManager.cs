@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
     private const string DEATHS = "deaths";
     private const string KILLS = "kills";
 
-    private PhotonView photonView;
+    private PhotonView pv;
     private GameObject playerController;
 
     private int kills;
@@ -25,28 +25,31 @@ public class PlayerManager : MonoBehaviour
 
     void Awake()
     {
-        photonView = GetComponent<PhotonView>();
+        pv = GetComponent<PhotonView>();
     }
 
     void Start()
     {
         //IF photonView is local player, instantiate player controller prefab
-        if (photonView.IsMine)
+        if (pv.IsMine)
             CreatePlayerController();
     }
 
     void CreatePlayerController()
     {
         Transform randomSpawnpoint = SpawnManager.Instance.GetRandomSpawnpoint();
+
+        //Create Photon Instantiation menthod and pass in viewID so that it can be used in other scripts
         playerController = PhotonNetwork.Instantiate(Path.Combine(PREFABS, PLAYER_CONTROLLER),
-            randomSpawnpoint.position, 
-            randomSpawnpoint.rotation, 
-            0, 
-            new object[] { photonView.ViewID });
+            randomSpawnpoint.position,
+            randomSpawnpoint.rotation,
+            0,
+            new object[] { pv.ViewID });
     }
 
     public void Die()
     {
+        //On Death, destroy Player Controller from Photon Newtwork
         PhotonNetwork.Destroy(playerController);
         CreatePlayerController();
 
@@ -60,7 +63,7 @@ public class PlayerManager : MonoBehaviour
 
     public void GetKill()
     {
-        photonView.RPC(nameof(RPC_GetKill), photonView.Owner);
+        pv.RPC(nameof(RPC_GetKill), pv.Owner);
     }
 
     [PunRPC]
@@ -74,5 +77,5 @@ public class PlayerManager : MonoBehaviour
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
 
-    public static PlayerManager Find(Player player) => FindObjectsOfType<PlayerManager>().SingleOrDefault(x => x.photonView.Owner == player);
+    public static PlayerManager Find(Player player) => FindObjectsOfType<PlayerManager>().SingleOrDefault(x => x.pv.Owner == player);
 }

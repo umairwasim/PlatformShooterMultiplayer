@@ -4,15 +4,15 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance;
 
-    [SerializeField] private UnityEngine.Transform[] spawnpoints;
+    [SerializeField] private Transform[] spawnpoints;
 
     void Awake()
     {
         Instance = this;
 
         if (spawnpoints.Length == 0)
-            spawnpoints = GetComponentsInChildren<UnityEngine.Transform>();
+            spawnpoints = GetComponentsInChildren<Transform>();
     }
 
-    public UnityEngine.Transform GetRandomSpawnpoint() => spawnpoints[Random.Range(0, spawnpoints.Length)].transform;
+    public Transform GetRandomSpawnpoint() => spawnpoints[Random.Range(0, spawnpoints.Length)].transform;
 }
