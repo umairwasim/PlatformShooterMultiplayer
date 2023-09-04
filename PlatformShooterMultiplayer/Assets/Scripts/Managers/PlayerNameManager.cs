@@ -6,14 +6,15 @@ using UnityEngine;
 
 public class PlayerNameManager : MonoBehaviour
 {
-	[SerializeField] TMP_InputField usernameInput;
+    private const string USERNNAME = "username";
+    [SerializeField] TMP_InputField usernameInput;
 
 	void Start()
 	{
-		if(PlayerPrefs.HasKey("username"))
+		if(PlayerPrefs.HasKey(USERNNAME))
 		{
-			usernameInput.text = PlayerPrefs.GetString("username");
-			PhotonNetwork.NickName = PlayerPrefs.GetString("username");
+			usernameInput.text = PlayerPrefs.GetString(USERNNAME);
+			PhotonNetwork.NickName = PlayerPrefs.GetString(USERNNAME);
 		}
 		else
 		{
@@ -25,6 +26,6 @@ public class PlayerNameManager : MonoBehaviour
 	public void OnUsernameInputValueChanged()
 	{
 		PhotonNetwork.NickName = usernameInput.text;
-		PlayerPrefs.SetString("username", usernameInput.text);
+		PlayerPrefs.SetString(USERNNAME, usernameInput.text);
 	}
 }
