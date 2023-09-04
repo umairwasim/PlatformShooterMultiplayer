@@ -16,24 +16,19 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < menus.Length; i++)
         {
             if (menus[i].menuType == menuType)
-            {
                 menus[i].Open();
-            }
             else if (menus[i].IsActive())
-            {
                 CloseMenu(menus[i]);
-            }
         }
     }
 
     public void OpenMenu(Menu menu)
     {
+        //open selected menu, close rest
         for (int i = 0; i < menus.Length; i++)
         {
             if (menus[i].IsActive())
-            {
                 CloseMenu(menus[i]);
-            }
         }
         menu.Open();
     }
