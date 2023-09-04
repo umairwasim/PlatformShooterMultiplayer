@@ -2,6 +2,9 @@ using UnityEngine;
 using Photon.Pun;
 using System.IO;
 using UnityEngine.UI;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
@@ -10,9 +13,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     public static bool facingRight;
 
     [Header("Health")]
-    public GameObject healthCanvas;
-    public Image healthBarImage;
-    public int maxHealth = 100;
+    [SerializeField] private SpriteRenderer playerSprite;
+    [SerializeField] private GameObject healthCanvas;
+    [SerializeField] private Image healthBarImage;
+    [SerializeField] private int maxHealth = 100;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -156,16 +160,25 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     {
         Debug.Log("Current Health before : " + currentHealth);
 
+        //pv.RPC(nameof(RPC_TakeDamage), pv.Owner, damage);
         pv.RPC(nameof(RPC_TakeDamage), pv.Owner, damage);
+
     }
 
     [PunRPC]
     void RPC_TakeDamage(int damage, PhotonMessageInfo info)
     {
+        StartCoroutine(DamageImapct(damage, info));
+    }
+
+    private IEnumerator DamageImapct(int damage, PhotonMessageInfo info)
+    {
+        playerSprite.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.color = Color.white;
+
         currentHealth -= damage;
-
-        Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID + " SENDER: "+ info.Sender);
-
+        Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID + " SENDER: " + info.Sender);
         healthBarImage.fillAmount = currentHealth / maxHealth;
 
         if (currentHealth <= 0)
