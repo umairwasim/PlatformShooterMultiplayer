@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.IO;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
@@ -8,9 +9,16 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 {
     public static bool facingRight;
 
+    [Header("Health")]
+    public GameObject healthCanvas;
+    public Image healthBarImage;
     public int maxHealth = 100;
+
+    [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
+
+    [Header("Shoot")]
     public Transform firePoint;
     public GameObject projectilePrefab;
 
@@ -43,7 +51,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     {
         //Prevent applying Physics to other client
         if (!pv.IsMine)
+        {
             Destroy(rb);
+            Destroy(healthCanvas);
+        }
+
+        healthBarImage.fillAmount = currentHealth / maxHealth;
     }
 
     private void FixedUpdate()
@@ -54,7 +67,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         Move();
         Jump();
         Shoot();
-        OutOfMapDie();
+        OutOfMapDeath();
     }
 
     #region Move/Jump/Shoot
@@ -119,7 +132,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     }
 
     //Call Die if player falls out of map and 
-    private void OutOfMapDie()
+    private void OutOfMapDeath()
     {
         if (transform.position.y < -10f)
             Die();
@@ -149,7 +162,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
         Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID);
 
-        // healthbarImage.fillAmount = currentHealth / maxHealth;
+        healthBarImage.fillAmount = currentHealth / maxHealth;
 
         if (currentHealth <= 0)
         {
