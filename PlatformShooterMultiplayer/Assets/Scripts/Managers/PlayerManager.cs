@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -60,6 +61,7 @@ public class PlayerManager : MonoBehaviour
         hash.Add(DEATHS, deaths);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
+
 
     public void GetKill()
     {
