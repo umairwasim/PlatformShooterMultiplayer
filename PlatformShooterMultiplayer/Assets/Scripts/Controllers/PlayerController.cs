@@ -52,8 +52,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         //Prevent applying Physics to other client
         if (!pv.IsMine)
         {
-            Destroy(rb);
-            Destroy(healthCanvas);
+           // Destroy(rb);
+            //Destroy(healthCanvas);
         }
 
         healthBarImage.fillAmount = currentHealth / maxHealth;
