@@ -4,7 +4,7 @@ using System.IO;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
-public class PlayerController : MonoBehaviourPunCallbacks
+public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 {
     public static bool facingRight;
 
@@ -26,13 +26,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Transform spriteTransform;
     private Rigidbody2D rb;
     private PhotonView pv;
-    private Vector3 direction;
+    private PlayerManager playerManager;
+    //private Vector3 direction;
 
     private void Awake()
     {
         spriteTransform = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
         pv = GetComponent<PhotonView>();
+        playerManager = PhotonView.Find((int)pv.InstantiationData[0]).GetComponent<PlayerManager>();
 
         currentHealth = maxHealth;
     }
@@ -52,22 +54,24 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Move();
         Jump();
         Shoot();
+        OutOfMapDie();
     }
 
+    #region Move/Jump/Shoot
     private void Move()
     {
         float horizontalInput = Input.GetAxis(HORIZONTAL);
 
         //Left
         if (horizontalInput > 0 && facingRight)
-            Flip();
+            FlipDirection();
 
         //Right
         else if (horizontalInput < 0 && !facingRight)
-            Flip();
+            FlipDirection();
 
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-      
+
         //if (spriteTransform.localScale.x < 1)
         //{
         //spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
@@ -96,55 +100,69 @@ public class PlayerController : MonoBehaviourPunCallbacks
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine(PREFABS, BULLET),
                 firePoint.position, firePoint.rotation);
 
-            // ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
             if (projectile.TryGetComponent(out ProjectileController projectileController))
-            {
-                //Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-                //rb.velocity = transform.right * projectileController.bulletData.speed;
-
-                //if (Input.GetAxisRaw(HORIZONTAL) > 0)
-                //    rb.velocity = transform.right * projectileController.bulletData.speed;
-                //else if (Input.GetAxisRaw(HORIZONTAL) < 0)
-                //    rb.velocity = -transform.right * projectileController.bulletData.speed;
-
-                // Set owner of the projectile
-                //projectileController.SetBulletDirection(direction);
                 projectileController.SetOwner(pv.ViewID);
-            }
+
+            // ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
+            //Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+            //rb.velocity = transform.right * projectileController.bulletData.speed;
+
+            //if (Input.GetAxisRaw(HORIZONTAL) > 0)
+            //    rb.velocity = transform.right * projectileController.bulletData.speed;
+            //else if (Input.GetAxisRaw(HORIZONTAL) < 0)
+            //    rb.velocity = -transform.right * projectileController.bulletData.speed;
+
+            // Set owner of the projectile
+            //projectileController.SetBulletDirection(direction);
+            //}
         }
     }
 
-    private void Flip()
+    //Call Die if player falls out of map and 
+    private void OutOfMapDie()
+    {
+        if (transform.position.y < -10f)
+            Die();
+    }
+
+    private void FlipDirection()
     {
         facingRight = !facingRight;
         transform.Rotate(0f, 180f, 0f);
     }
 
-    public void SetDir(Vector3 dir)
-    {
-        direction = dir;
-    }
+    #endregion
 
-    public Vector3 GetDir()
-    {
-        return direction;
-    }
 
+    #region Take Damage
+
+    //Send a RPC call of Take Damage
     public void TakeDamage(int damage)
     {
-        if (!pv.IsMine)
-            return;
+        pv.RPC(nameof(RPC_TakeDamage), pv.Owner, damage);
+    }
 
+    [PunRPC]
+    void RPC_TakeDamage(int damage, PhotonMessageInfo info)
+    {
         currentHealth -= damage;
 
-        if (currentHealth <= 0)
-            Die();
+        Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID);
 
+        // healthbarImage.fillAmount = currentHealth / maxHealth;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+            PlayerManager.Find(info.Sender).GetKill();
+        }
     }
+
+    #endregion
 
     private void Die()
     {
-        // death logic
+        playerManager.Die();
     }
 
     #region Grounded Check
@@ -163,6 +181,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             isGrounded = false;
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        throw new System.NotImplementedException();
     }
     #endregion
 }
