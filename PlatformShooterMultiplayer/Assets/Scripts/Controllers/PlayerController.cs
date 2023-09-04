@@ -30,11 +30,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     private const string HORIZONTAL = "Horizontal";
     private const string PREFABS = "Prefabs";
     private const string BULLET = "SimpleBullet";
-
+    private const string MOVE_SPEED = "Speed";
     private Transform spriteTransform;
     private Rigidbody2D rb;
     private PhotonView pv;
     private PlayerManager playerManager;
+    private Animator animator;
     //private Vector3 direction;
 
     private void Awake()
@@ -42,6 +43,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         spriteTransform = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
         pv = GetComponent<PhotonView>();
+        animator = GetComponent<Animator>();
         playerManager = PhotonView.Find((int)pv.InstantiationData[0]).GetComponent<PlayerManager>();
 
         currentHealth = maxHealth;
@@ -52,7 +54,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         //Prevent applying Physics to other client
         if (!pv.IsMine)
         {
-           // Destroy(rb);
+            // Destroy(rb);
             //Destroy(healthCanvas);
         }
 
@@ -84,7 +86,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
             FlipDirection();
 
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-
+        animator.SetFloat(MOVE_SPEED, rb.velocity.magnitude);
         //if (spriteTransform.localScale.x < 1)
         //{
         //spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
@@ -152,6 +154,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     //Send a RPC call of Take Damage
     public void TakeDamage(int damage)
     {
+        Debug.Log("Current Health before : " + currentHealth);
+
         pv.RPC(nameof(RPC_TakeDamage), pv.Owner, damage);
     }
 
@@ -160,7 +164,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     {
         currentHealth -= damage;
 
-        Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID);
+        Debug.Log("Current Health: " + currentHealth + " ViewID: " + photonView.ViewID + " SENDER: "+ info.Sender);
 
         healthBarImage.fillAmount = currentHealth / maxHealth;
 
