@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using System.IO;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
@@ -19,16 +20,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private const string GROUND = "Ground";
     private const string FIRE = "Fire1";
     private const string HORIZONTAL = "Horizontal";
+    private const string PREFABS = "Prefabs";
+    private const string BULLET = "SimpleBullet";
 
     private Transform spriteTransform;
     private Rigidbody2D rb;
     private PhotonView pv;
+    private Vector3 direction;
 
     private void Awake()
     {
+        spriteTransform = GetComponent<Transform>();
         rb = GetComponent<Rigidbody2D>();
         pv = GetComponent<PhotonView>();
-        spriteTransform = GetComponent<Transform>();
 
         currentHealth = maxHealth;
     }
@@ -50,35 +54,38 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Shoot();
     }
 
-    private void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-    }
-
     private void Move()
     {
         float horizontalInput = Input.GetAxis(HORIZONTAL);
 
         //Left
-        if (Input.GetAxisRaw(HORIZONTAL) > 0)
-        {
-            if (spriteTransform.localScale.x < 1)
-            {
-                spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
-            }
-            facingRight = false;
-        }
+        if (horizontalInput > 0 && facingRight)
+            Flip();
+
         //Right
-        else if (Input.GetAxisRaw(HORIZONTAL) < 0)
-        {
-            if (spriteTransform.localScale.x > 1)
-            {
-                spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
-            }
-            facingRight = true;
-        }
+        else if (horizontalInput < 0 && !facingRight)
+            Flip();
+
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+      
+        //if (spriteTransform.localScale.x < 1)
+        //{
+        //spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
+        //}
+        //facingRight = false;
+        //SetDir(Vector3.left);
+        //if (spriteTransform.localScale.x > 1)
+        //{
+        //spriteTransform.localScale = new Vector3(spriteTransform.localScale.x * -1, spriteTransform.localScale.y, spriteTransform.localScale.z);
+        //}
+        //facingRight = true;
+        //SetDir(Vector3.right);
+    }
+
+    private void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }
 
     private void Shoot()
@@ -86,19 +93,41 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (Input.GetButtonDown(FIRE))
         {
             // Instantiate and synchronize projectiles
-            GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, firePoint.position, firePoint.rotation);
+            GameObject projectile = PhotonNetwork.Instantiate(Path.Combine(PREFABS, BULLET),
+                firePoint.position, firePoint.rotation);
 
-            ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
-            Rigidbody2D rb = projectile?.GetComponent<Rigidbody2D>();
-
-            if (projectileController)
+            // ProjectileController projectileController = projectile.GetComponent<ProjectileController>();
+            if (projectile.TryGetComponent(out ProjectileController projectileController))
             {
-                rb.velocity = transform.right * projectileController.bulletData.speed;
+                //Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+                //rb.velocity = transform.right * projectileController.bulletData.speed;
+
+                //if (Input.GetAxisRaw(HORIZONTAL) > 0)
+                //    rb.velocity = transform.right * projectileController.bulletData.speed;
+                //else if (Input.GetAxisRaw(HORIZONTAL) < 0)
+                //    rb.velocity = -transform.right * projectileController.bulletData.speed;
 
                 // Set owner of the projectile
+                //projectileController.SetBulletDirection(direction);
                 projectileController.SetOwner(pv.ViewID);
             }
         }
+    }
+
+    private void Flip()
+    {
+        facingRight = !facingRight;
+        transform.Rotate(0f, 180f, 0f);
+    }
+
+    public void SetDir(Vector3 dir)
+    {
+        direction = dir;
+    }
+
+    public Vector3 GetDir()
+    {
+        return direction;
     }
 
     public void TakeDamage(int damage)
